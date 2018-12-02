@@ -15,18 +15,18 @@ not stable, but it's the cheapest and easiest way to mount drives with write acc
 2. Download the zip
 
    ```sh
-   curl -LJO https://github.com/vaibhavsingh97/ntfsfix/archive/v0.1.zip
+   curl -LJO https://github.com/vaibhavsingh97/ntfsfix/archive/v0.2.zip
    ```
 
 3. Extract zip
 
     ```sh
-    unzip ntfsfix-0.1.zip
+    unzip ntfsfix-0.2.zip
     ```
 4. Go to directory
 
    ```sh
-   cd ntfsfix-0.1/
+   cd ntfsfix-0.2/
    ```
 
 5. Run following command
@@ -40,7 +40,7 @@ not stable, but it's the cheapest and easiest way to mount drives with write acc
 1. Go to directory
 
    ```sh
-   cd ntfsfix-0.1/
+   cd ntfsfix-0.2/
    ```
 
 2. Run following command
