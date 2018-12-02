@@ -1,0 +1,62 @@
+#!/bin/bash
+
+set -e
+autoAddDrive(){
+	# Check if filesystem is NTFS
+	fileSystemType=$(diskutil info "$volume" | grep "Type (Bundle):" | cut -d ':' -f2 | tr -d ' ')
+	if [ "$fileSystemType" == "ntfs" ];then
+		UUID=$(diskutil info $volume | grep UUID | cut -d ':' -f 2 | tr -d ' ')
+		volumeName=$(diskutil info $volume | grep "Volume Name" | cut -d ':' -f 2 | tr -d ' ')
+		if [ ! -z "$UUID" ];then
+			drive="UUID=$UUID none ntfs rw,auto,nobrowse #$volumeName"
+		fi
+		if [ -e "/etc/fstab" ];then
+			# Check UUID already exist in /etc/fstab
+			cat "/etc/fstab" | while read LINE; do
+				if [ "$LINE | grep $UUID" ];then
+					echo "$volume already configured."
+					exit 0
+				else
+					# adding UUID in fstab
+					echo "Adding $volumeName in fstab in Progress..."
+					echo $drive >> /etc/fstab
+					ln -s $volume ~/Desktop/$volumeName
+					echo "$volumeName successfully added in fstab"
+					device=$(diskutil info "$volume" | grep "Device Node" | cut -d ':' -f2 | tr -d ' ')
+					diskutil unmount "$volume"
+					diskutil mount $device
+				fi
+			done
+		else
+			# adding UUID in fstab
+			echo "Adding $volumeName in fstab in Progress..."
+			echo $drive >> /etc/fstab
+			ln -s $volume ~/Desktop/$volumeName
+			echo "$volumeName successfully added in fstab"
+			device=$(diskutil info "$volume" | grep "Device Node" | cut -d ':' -f2 | tr -d ' ')
+			diskutil unmount "$volume"
+			diskutil mount $device
+		fi
+	else
+		echo "$volume is not an NTFS drive"
+	fi
+}
+
+
+# List all the mounted drives
+autoSelectDrive(){
+	for volume in "/Volumes"/*
+	do
+		autoAddDrive
+	done
+}
+
+# https://askubuntu.com/questions/15853/how-can-a-script-check-if-its-being-run-as-root
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root"
+   exit 1
+else
+	echo "Welcome to NTFS fix"
+	autoSelectDrive
+	open "/Volumes/"
+fi
