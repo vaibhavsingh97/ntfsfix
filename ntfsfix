@@ -9,6 +9,9 @@ autoAddDrive(){
 		volumeName=$(diskutil info $volume | grep "Volume Name" | cut -d ':' -f 2 | tr -d ' ')
 		if [ ! -z "$UUID" ];then
 			drive="UUID=$UUID none ntfs rw,auto,nobrowse #$volumeName"
+		else
+			# https://stackoverflow.com/questions/19661267/replace-spaces-with-underscores-via-bash
+			drive="LABEL=${volumeName// /\\040} none ntfs rw,auto,nobrowse #$volumeName"
 		fi
 		if [ -e "/etc/fstab" ];then
 			# Check UUID already exist in /etc/fstab
